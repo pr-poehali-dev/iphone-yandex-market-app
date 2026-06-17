@@ -120,22 +120,47 @@
     -webkit-backdrop-filter: blur(20px);
   }
 
-  /* iOS-style Liquid Glass navbar */
+  /* iOS Liquid Glass navbar — максимальный эффект */
   .liquid-glass {
     background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.07) 0%,
-      rgba(180, 30, 30, 0.06) 50%,
-      rgba(0, 0, 0, 0.65) 100%
+      180deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(160, 20, 20, 0.05) 35%,
+      rgba(0, 0, 0, 0.75) 100%
     );
-    backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(52px) saturate(230%) brightness(1.1) contrast(1.06);
+    -webkit-backdrop-filter: blur(52px) saturate(230%) brightness(1.1)
+      contrast(1.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: none;
     box-shadow:
-      0 -1px 0 rgba(255, 255, 255, 0.08) inset,
-      0 1px 0 rgba(0, 0, 0, 0.3) inset,
-      0 12px 40px rgba(0, 0, 0, 0.6),
-      0 4px 16px rgba(180, 20, 20, 0.08);
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+      0 -8px 32px rgba(0, 0, 0, 0.5),
+      0 -2px 12px rgba(180, 20, 20, 0.12);
+  }
+
+  /* Screen border glow */
+  .screen-border {
+    box-shadow:
+      0 0 0 1.5px rgba(180, 30, 30, 0.4),
+      0 0 30px rgba(180, 30, 30, 0.1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+
+  /* Scroll fade-in for cards */
+  .card-reveal {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+    transition:
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-reveal.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 
   .no-scrollbar::-webkit-scrollbar {

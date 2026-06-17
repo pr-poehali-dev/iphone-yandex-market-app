@@ -5,48 +5,80 @@ interface Props {
 }
 
 export default function SplashScreen({ onDone }: Props) {
-  const [leaving, setLeaving] = useState(false);
+  const [phase, setPhase] = useState<'enter' | 'show' | 'leave'>('enter');
 
   useEffect(() => {
-    const t1 = setTimeout(() => setLeaving(true), 1800);
-    const t2 = setTimeout(() => onDone(), 2300);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => setPhase('show'), 100);
+    const t2 = setTimeout(() => setPhase('leave'), 2400);
+    const t3 = setTimeout(() => onDone(), 2900);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onDone]);
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background transition-all duration-500 ${leaving ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-between overflow-hidden"
+      style={{
+        background: 'radial-gradient(ellipse at 50% 30%, hsl(0 60% 12%) 0%, hsl(0 0% 3%) 70%)',
+        opacity: phase === 'leave' ? 0 : 1,
+        transform: phase === 'leave' ? 'scale(1.04)' : 'scale(1)',
+        transition: 'opacity 0.5s ease-in, transform 0.5s ease-in',
+      }}
     >
-      {/* Ambient glow */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-        <div className="absolute top-1/3 left-1/3 w-48 h-48 rounded-full bg-primary/10 blur-[80px]" style={{ animationDelay: '0.3s' }} />
+      {/* Ambient orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(180,30,30,0.25) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+        <div className="absolute bottom-[-5%] right-[-15%] w-[50vw] h-[50vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(140,20,20,0.18) 0%, transparent 70%)', filter: 'blur(60px)' }} />
       </div>
 
-      {/* Logo */}
-      <div className="relative flex flex-col items-center animate-splash-logo">
-        {/* Ring */}
-        <div className="relative w-24 h-24 mb-6">
-          <div className="absolute inset-0 rounded-full border-2 border-primary/40 animate-pulse-ring" />
-          <div className="absolute inset-0 rounded-full border border-primary/20 animate-pulse-ring" style={{ animationDelay: '0.4s' }} />
-          <div className="w-24 h-24 rounded-full gold-gradient flex items-center justify-center shadow-2xl">
-            <span className="font-display text-4xl font-bold text-white tracking-tight">A</span>
+      {/* Top greeting */}
+      <div className="relative z-10 pt-20 text-center"
+        style={{ opacity: phase === 'enter' ? 0 : 1, transform: phase === 'enter' ? 'translateY(-16px)' : 'translateY(0)', transition: 'all 0.7s ease 0.3s' }}>
+        <p className="text-xs tracking-[0.5em] text-white/40 uppercase">Добро пожаловать в</p>
+      </div>
+
+      {/* Logo block */}
+      <div className="relative z-10 flex flex-col items-center"
+        style={{ opacity: phase === 'enter' ? 0 : 1, transform: phase === 'enter' ? 'scale(0.7)' : 'scale(1)', transition: 'all 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s' }}>
+
+        {/* Logo ring */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 rounded-full animate-ping"
+            style={{ background: 'rgba(200,40,40,0.2)', animationDuration: '2s' }} />
+          <div className="w-28 h-28 rounded-full flex items-center justify-center shadow-2xl relative"
+            style={{ background: 'linear-gradient(135deg, hsl(0 80% 55%) 0%, hsl(0 70% 35%) 100%)', boxShadow: '0 0 60px rgba(180,30,30,0.5), 0 20px 40px rgba(0,0,0,0.5)' }}>
+            <span className="font-display text-5xl font-bold text-white" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>A</span>
           </div>
         </div>
 
-        <h1 className="font-display text-5xl font-bold tracking-widest gold-text">AURUM</h1>
-        <p className="text-muted-foreground text-xs tracking-[0.4em] uppercase mt-2">Премиальный маркетплейс</p>
+        <h1 className="font-display font-bold text-white tracking-[0.25em]" style={{ fontSize: 42 }}>AURUM</h1>
+        <p className="text-white/40 text-xs tracking-[0.35em] uppercase mt-2">Luxury Marketplace</p>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mt-6">
+          <div className="w-12 h-px bg-gradient-to-r from-transparent to-white/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+          <div className="w-12 h-px bg-gradient-to-l from-transparent to-white/20" />
+        </div>
       </div>
 
-      {/* Loading dots */}
-      <div className="absolute bottom-16 flex gap-2">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="w-1.5 h-1.5 rounded-full bg-primary/60"
-            style={{ animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }}
-          />
-        ))}
+      {/* Bottom tagline + loader */}
+      <div className="relative z-10 pb-16 flex flex-col items-center gap-6"
+        style={{ opacity: phase === 'enter' ? 0 : 1, transform: phase === 'enter' ? 'translateY(16px)' : 'translateY(0)', transition: 'all 0.7s ease 0.5s' }}>
+        <p className="text-white/25 text-xs text-center leading-relaxed max-w-[220px]">
+          Эксклюзивные товары<br />от мировых брендов
+        </p>
+
+        {/* Loading bar */}
+        <div className="w-32 h-0.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+          <div className="h-full rounded-full"
+            style={{
+              background: 'linear-gradient(90deg, hsl(0 80% 55%), hsl(0 60% 70%))',
+              width: phase === 'show' ? '100%' : '0%',
+              transition: 'width 2s ease',
+            }} />
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,7 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
-
-const PRODUCTS = [
-  { id: 1, name: 'AURUM Sound One', brand: 'Наушники', price: 38900, oldPrice: 45000, rating: 4.9, reviews: 1243, isNew: true, popularity: 98, category: 'Электроника', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/cf8e2641-8bd8-4e44-87dc-95fa71af8936.jpg' },
-  { id: 2, name: 'Chronos Gold', brand: 'Часы', price: 124000, oldPrice: 0, rating: 5.0, reviews: 567, isNew: true, popularity: 95, category: 'Часы', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/6f2b9f6c-8cf4-4adb-9068-d8d1efa6c1ed.jpg' },
-  { id: 3, name: 'Emerald Tote', brand: 'Сумка', price: 86500, oldPrice: 99000, rating: 4.8, reviews: 892, isNew: false, popularity: 91, category: 'Аксессуары', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/be2e72d7-e064-4ccf-8ddd-97ca3d6d92a5.jpg' },
-  { id: 4, name: 'AURUM Sound Pro', brand: 'Наушники', price: 52400, oldPrice: 0, rating: 4.7, reviews: 432, isNew: false, popularity: 87, category: 'Электроника', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/cf8e2641-8bd8-4e44-87dc-95fa71af8936.jpg' },
-  { id: 5, name: 'Chronos Classic', brand: 'Часы', price: 98700, oldPrice: 110000, rating: 4.6, reviews: 321, isNew: false, popularity: 80, category: 'Часы', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/6f2b9f6c-8cf4-4adb-9068-d8d1efa6c1ed.jpg' },
-  { id: 6, name: 'Noir Clutch', brand: 'Сумка', price: 64200, oldPrice: 0, rating: 4.9, reviews: 718, isNew: true, popularity: 89, category: 'Аксессуары', img: 'https://cdn.poehali.dev/projects/4852ca01-beec-41f2-84d7-6a385a88588b/files/be2e72d7-e064-4ccf-8ddd-97ca3d6d92a5.jpg' },
-];
+import { PRODUCTS, fmt } from '@/data/products';
 
 const CATEGORIES = ['Все', 'Электроника', 'Часы', 'Аксессуары'];
 const SORTS = [
@@ -25,9 +18,8 @@ const NAV = [
   { id: 'profile', label: 'Профиль', icon: 'User' },
 ];
 
-const fmt = (n: number) => n.toLocaleString('ru-RU') + ' ₽';
-
 export default function Index() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState('home');
   const [cat, setCat] = useState('Все');
   const [sort, setSort] = useState('popular');
@@ -146,7 +138,10 @@ export default function Index() {
                 className="group animate-scale-in"
                 style={{ animationDelay: `${i * 60}ms`, opacity: 0 }}
               >
-                <div className="relative rounded-2xl overflow-hidden bg-card border border-border aspect-square">
+                <div
+                  onClick={() => navigate(`/product/${p.id}`)}
+                  className="relative rounded-2xl overflow-hidden bg-card border border-border aspect-square cursor-pointer"
+                >
                   <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   {p.isNew && (
                     <span className="absolute top-2 left-2 text-[10px] font-medium px-2 py-1 rounded-full gold-gradient text-primary-foreground">
@@ -154,7 +149,7 @@ export default function Index() {
                     </span>
                   )}
                   <button
-                    onClick={() => toggle(fav, setFav, p.id)}
+                    onClick={(e) => { e.stopPropagation(); toggle(fav, setFav, p.id); }}
                     className="absolute top-2 right-2 w-8 h-8 rounded-full glass flex items-center justify-center"
                   >
                     <Icon name="Heart" size={15} className={fav.includes(p.id) ? 'text-gold fill-gold' : 'text-foreground'} />
@@ -162,7 +157,7 @@ export default function Index() {
                 </div>
                 <div className="mt-2.5">
                   <p className="text-[11px] text-muted-foreground">{p.brand}</p>
-                  <h3 className="text-sm font-medium leading-tight">{p.name}</h3>
+                  <h3 onClick={() => navigate(`/product/${p.id}`)} className="text-sm font-medium leading-tight cursor-pointer">{p.name}</h3>
                   <div className="flex items-center gap-1 mt-1">
                     <Icon name="Star" size={12} className="text-gold fill-gold" />
                     <span className="text-xs text-muted-foreground">{p.rating} · {p.reviews}</span>
@@ -278,7 +273,7 @@ export default function Index() {
               </div>
               <input type="range" min={30000} max={150000} step={5000} value={maxPrice}
                 onChange={(e) => setMaxPrice(+e.target.value)}
-                className="w-full accent-[hsl(42_60%_60%)]" />
+                className="w-full accent-[hsl(0_78%_53%)]" />
             </div>
 
             <div className="mb-6">
@@ -336,6 +331,7 @@ function EmptyState({ icon, text }: { icon: string; text: string }) {
 }
 
 function SimpleList({ title, ids, icon, empty }: { title: string; ids: number[]; icon: string; empty: string }) {
+  const navigate = useNavigate();
   return (
     <main className="relative z-10 px-6 animate-fade-in">
       <h2 className="font-display text-3xl font-semibold mb-5">{title}</h2>
@@ -346,7 +342,7 @@ function SimpleList({ title, ids, icon, empty }: { title: string; ids: number[];
           {ids.map((id) => {
             const p = PRODUCTS.find((x) => x.id === id)!;
             return (
-              <div key={id}>
+              <div key={id} onClick={() => navigate(`/product/${id}`)} className="cursor-pointer">
                 <div className="rounded-2xl overflow-hidden border border-border aspect-square">
                   <img src={p.img} className="w-full h-full object-cover" alt={p.name} />
                 </div>
